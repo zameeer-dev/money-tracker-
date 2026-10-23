@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Money Coach</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-soft: #e8f0ff;
+            --accent: #7c3aed;
+            --success: #16a34a;
+            --danger: #dc3545;
+            --warning: #f59e0b;
+            --shadow: 0 14px 35px rgba(15, 23, 42, .10);
+            --glow1: rgba(37, 99, 235, .18);
+            --glow2: rgba(124, 58, 237, .16);
+        }
+
+        [data-theme="dark"] {
+            --bg: #070c16;
+            --card: #101a2c;
+            --text: #eaf2ff;
+            --muted: #a9b8cc;
+            --border: #24344d;
+            --primary: #5aa2ff;
+            --primary-soft: #16283f;
+            --accent: #a78bfa;
+            --success: #34d399;
+            --danger: #fb7185;
+            --warning: #fbbf24;
+            --shadow: 0 18px 45px rgba(0, 0, 0, .45);
+            --glow1: rgba(90, 162, 255, .20);
+            --glow2: rgba(167, 139, 250, .18);
+        }
+
+        [data-theme="eye"] {
+            --bg: #f3ead6;
+            --card: #fff9ea;
+            --text: #43331d;
+            --muted: #7d6a4d;
+            --border: #e2d2b2;
+            --primary: #a3651b;
+            --primary-soft: #f4e5c6;
+            --accent: #8a5a17;
+            --shadow: 0 14px 30px rgba(100, 80, 45, .15);
+            --glow1: rgba(163, 101, 27, .15);
+            --glow2: rgba(138, 90, 23, .12);
+        }
+
+        /* Dark mode subheadings */
+        [data-theme="dark"] .form-label,
+        [data-theme="dark"] h6,
+        [data-theme="dark"] .fw-bold,
+        [data-theme="dark"] .dropdown-item {
+            color: #414141 !important;
+        }
+
+        * {
+            transition: background-color .25s ease, color .25s ease,
+                border-color .25s ease, transform .2s ease, box-shadow .2s ease;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .8;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        .blob.one {
+            width: 420px;
+            height: 420px;
+            background: var(--glow1);
+            top: -80px;
+            left: -80px;
+        }
+
+        .blob.two {
+            width: 500px;
+            height: 500px;
+            background: var(--glow2);
+            bottom: -140px;
+            right: -100px;
+            animation-delay: -6s;
+        }
+
+        .blob.three {
+            width: 320px;
+            height: 320px;
+            background: var(--glow1);
+            bottom: 20%;
+            left: 35%;
+            animation-delay: -11s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(45px, -35px) scale(1.08);
+            }
+
+            66% {
+                transform: translate(-35px, 30px) scale(.95);
+            }
+        }
+
+        .card {
+            background: color-mix(in srgb, var(--card) 92%, transparent);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .text-muted {
+            color: var(--muted) !important;
+        }
+
+        .navbar,
+        .modal-content,
+        .dropdown-menu,
+        .form-control,
+        .form-select {
+            background: var(--card);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: var(--card);
+            color: var(--text);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--primary) 22%, transparent);
+        }
+
+        .navbar-brand {
+            font-weight: 900;
+            letter-spacing: -.4px;
+        }
+
+        .nav-link {
+            color: var(--text);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-soft);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            background: var(--primary) !important;
+            color: white !important;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 35%, transparent);
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--glow1);
+            right: -25px;
+            top: -25px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 850;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeUp .4s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .income {
+            color: var(--success);
+            font-weight: 750;
+        }
+
+        .expense {
+            color: var(--danger);
+            font-weight: 750;
+        }
+
+        .badge-soft {
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .theme-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .theme-dot.active {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 15px 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background: var(--card);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 10px;
+            color: var(--muted);
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+            animation: fadeUp .25s ease;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg,
+                    var(--primary-soft),
+                    color-mix(in srgb, var(--card) 90%, transparent));
+            border-left: 5px solid var(--primary);
+        }
+
+        #chatWidget {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 1080;
+        }
+
+        #chatButton {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 1.6rem;
+            box-shadow: var(--shadow);
+            animation: pulse 2.4s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 45%, transparent);
+            }
+
+            50% {
+                box-shadow: 0 0 0 16px transparent;
+            }
+        }
+
+        #chatBox {
+            width: 370px;
+            height: 480px;
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            right: 22px;
+            bottom: 100px;
+            z-index: 1080;
+            overflow: hidden;
+        }
+
+        #chatBox.open {
+            display: flex;
+            animation: fadeUp .3s ease;
+        }
+
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .chat-msg {
+            max-width: 88%;
+            padding: 10px 13px;
+            border-radius: 16px;
+            margin-bottom: 9px;
+            font-size: .9rem;
+            line-height: 1.45;
+        }
+
+        .bot {
+            background: var(--primary-soft);
+        }
+
+        .user {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+        }
+
+        .suggestion {
+            font-size: .78rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 20px;
+            padding: 5px 11px;
+            margin: 3px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background: var(--primary-soft);
+            transform: translateY(-2px);
+        }
+
+        .table {
+            color: var(--text);
+        }
+
+        .table-light {
+            background: var(--primary-soft) !important;
+            color: var(--text) !important;
+        }
+
+        .progress {
+            background: var(--border);
+        }
+
+        .goal-card {
+            border-left: 5px solid var(--accent);
+        }
+
+        .subscription-card {
+            border-left: 5px solid var(--danger);
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        @media (max-width: 768px) {
+            #chatBox {
+                width: calc(100% - 28px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-animation">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div class="modal fade" id="authModal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-2">
+                <div class="modal-body">
+                    <h4 class="fw-bold text-center">🎓 Campus Money Coach</h4>
+                    <p class="text-center text-muted">Budget smarter. Save better. Spend consciously.</p>
+
+                    <ul class="nav nav-pills justify-content-center mb-3">
+                        <li class="nav-item"><button class="nav-link active" data-auth="login">Login</button></li>
+                        <li class="nav-item"><button class="nav-link" data-auth="signup">Sign Up</button></li>
+                    </ul>
+
+                    <form id="authForm">
+                        <div class="mb-3" id="nameField" style="display:none;">
+                            <label class="form-label">Full name</label>
+                            <input class="form-control" id="authName">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="authEmail" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="authPassword" minlength="4" required>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="authSubmit">Login</button>
+                        <p class="text-danger text-center mt-2 mb-0" id="authError"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-primary">🎓 Campus Money Coach</a>
+
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav me-auto nav-pills gap-1">
+                    <li class="nav-item"><button class="nav-link active" data-page="dashboard">Dashboard</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="add">Add</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="transactions">History</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="budgets">Budgets</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="planner">Pocket Planner</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="goals">Goals</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="subscriptions">Subscriptions</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="group">Roommates</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="afford">Afford?</button></li>
+                    <li class="nav-item"><button class="nav-link" data-page="faq">FAQ</button></li>
+                </ul>
+
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                        <div class="avatar" id="userAvatar">A</div>
+                        <div class="d-none d-md-block">
+                            <div class="fw-semibold" id="navUserName">Student</div>
+                            <small class="text-muted">Money Coach User</small>
+                        </div>
+                    </div>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><button class="dropdown-item" data-page="settings"><i class="bi bi-sliders"></i>
+                                Settings</button></li>
+                        <li><button class="dropdown-item" data-page="faq"><i class="bi bi-question-circle"></i>
+                                FAQ</button></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><button class="dropdown-item text-danger" id="logoutBtn"><i
+                                    class="bi bi-box-arrow-right"></i> Logout</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="page-section active">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+                <div>
+                    <h3 class="fw-bold mb-0">Welcome, <span id="dashboardName">Student</span> 👋</h3>
+                    <p class="text-muted mb-0">Your live financial command center</p>
+                </div>
+                <button class="btn btn-primary" data-page="add"><i class="bi bi-plus-lg"></i> Add Transaction</button>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card p-3">
+                        <span class="text-muted">Total Income</span>
+                        <div class="stat-value income" id="totalIncome">₹0</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card stat-card p-3">
+                        <span class="text-muted">Total Spent</span>
+                        <div class="stat-value expense" id="totalSpent">₹0</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card stat-card p-3">
+                        <span class="text-muted">Remaining</span>
+                        <div class="stat-value" id="remainingBalance">₹0</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card stat-card p-3">
+                        <span class="text-muted">Financial Health</span>
+                        <div class="stat-value text-primary" id="healthScore">0 / 100</div>
+                        <div class="progress mt-2" style="height:8px;">
+                            <div class="progress-bar" id="healthBar" style="width:0%;background:var(--primary);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-lg-7">
+                    <div class="card p-3">
+                        <h6 class="fw-bold">Monthly Spending Trend</h6>
+                        <div style="height:260px;">
+                            <canvas id="spendingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card p-3">
+                        <h6 class="fw-bold">Category Distribution</h6>
+                        <div style="height:260px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card insight-card p-4 mt-4">
+                <h5 class="fw-bold"><i class="bi bi-stars"></i> Smart Insights & Suggestions</h5>
+                <div id="smartInsights" class="text-muted">Add transactions to unlock personalized insights.</div>
+            </div>
+
+            <div class="card p-4 mt-4">
+                <h5 class="fw-bold"><i class="bi bi-calendar-week"></i> Smart Weekly Report</h5>
+                <div id="weeklyReport" class="text-muted">Your weekly analysis will appear after you add transactions.
+                </div>
+            </div>
+        </section>
+
+        <!-- ADD TRANSACTION -->
+        <section id="add" class="page-section">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card p-4">
+                        <h4 class="fw-bold mb-3">Add Income / Expense</h4>
+
+                        <form id="transactionForm">
+                            <div class="mb-3">
+                                <label class="form-label">Type</label>
+                                <select class="form-select" id="type">
+                                    <option value="expense">Expense</option>
+                                    <option value="income">Income</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Amount (₹)</label>
+                                <input type="number" class="form-control" id="amount" min="1" required>
+                                <small class="text-muted" id="amountPreview"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="category">
+                                    <option>Food</option>
+                                    <option>Travel</option>
+                                    <option>Hostel</option>
+                                    <option>Academics</option>
+                                    <option>Shopping</option>
+                                    <option>Entertainment</option>
+                                    <option>Health</option>
+                                    <option>Savings</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select" id="priority">
+                                    <option value="essential">Essential</option>
+                                    <option value="important">Important</option>
+                                    <option value="optional">Optional</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="date" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <input class="form-control" id="description"
+                                    placeholder="Canteen lunch, metro recharge...">
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="isSubscription">
+                                <label class="form-check-label">Mark as recurring subscription</label>
+                            </div>
+
+                            <button class="btn btn-primary w-100">Save Transaction</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRANSACTION HISTORY -->
+        <section id="transactions" class="page-section">
+            <div class="card p-4">
+                <h4 class="fw-bold mb-3">Transaction History</h4>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-md-3"><input type="date" class="form-control" id="fromDate"></div>
+                    <div class="col-md-3"><input type="date" class="form-control" id="toDate"></div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="typeFilter">
+                            <option value="">All types</option>
+                            <option value="expense">Expenses</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" id="searchText" placeholder="Search description/category">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Description</th>
+                                <th class="text-end">Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- BUDGETS -->
+        <section id="budgets" class="page-section">
+            <div class="card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold mb-0">Budget Manager</h4>
+                    <button class="btn btn-outline-danger" id="resetBudgets">Reset All Budgets</button>
+                </div>
+
+                <div class="row g-3 mb-4" id="budgetContainer"></div>
+
+                <h6 class="fw-bold">Add / Update Category Budget</h6>
+
+                <form class="row g-2" id="budgetForm">
+                    <div class="col-md-4">
+                        <input class="form-control" id="budgetCategory" placeholder="Category name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" id="budgetLimit" placeholder="Monthly limit ₹"
+                            required>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="budgetPriority">
+                            <option value="essential">Essential</option>
+                            <option value="important">Important</option>
+                            <option value="optional">Optional</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100">Save</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- POCKET PLANNER -->
+        <section id="planner" class="page-section">
+            <div class="card p-4">
+                <h4 class="fw-bold mb-3">Pocket-Money Planner</h4>
+                <p class="text-muted">Enter your monthly allowance. We will divide it into a balanced student budget.
+                </p>
+
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-6">
+                        <input type="number" class="form-control" id="allowance" placeholder="Monthly allowance ₹">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100" id="planAllowance">Create Plan</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-primary w-100" id="applyPlan">Apply to Budgets</button>
+                    </div>
+                </div>
+
+                <div id="plannerResult" class="mt-4"></div>
+            </div>
+        </section>
+
+        <!-- GOALS -->
+        <section id="goals" class="page-section">
+            <div class="card p-4">
+                <h4 class="fw-bold mb-3">Savings Goals</h4>
+
+                <form class="row g-2 mb-4" id="goalForm">
+                    <div class="col-md-4">
+                        <input class="form-control" id="goalName" placeholder="Laptop, Goa trip, course..." required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" id="goalTarget" placeholder="Target ₹" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" id="goalDeadline" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100">Add Goal</button>
+                    </div>
+                </form>
+
+                <div class="row g-3" id="goalContainer"></div>
+            </div>
+        </section>
+
+        <!-- SUBSCRIPTIONS -->
+        <section id="subscriptions" class="page-section">
+            <div class="card p-4">
+                <h4 class="fw-bold mb-3">Subscription Trap Detector</h4>
+                <p class="text-muted">Detect recurring payments and identify hidden monthly costs.</p>
+
+                <div id="subscriptionList"></div>
+                <div class="alert alert-warning mt-3 mb-0" id="subscriptionSummary"></div>
+            </div>
+        </section>
+
+        <!-- GROUP -->
+        <section id="group" class="page-section">
+            <div class="card p-4">
+                <h4 class="fw-bold">Hostel Room A</h4>
+                <p class="text-muted">Shared expenses and balances</p>
+
+                <form class="row g-2" id="groupForm">
+                    <div class="col-md-4">
+                        <input class="form-control" id="groupDesc" placeholder="Description" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" id="groupAmount" placeholder="Total ₹" required>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="groupSplit">
+                            <option value="equal">Equal split</option>
+                            <option value="exact">Exact amounts</option>
+                            <option value="percentage">Percentage</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100">Add</button>
+                    </div>
+                </form>
+
+                <div id="groupResult" class="alert alert-info mt-3 mb-0">
+                    Add a shared expense to calculate balances.
+                </div>
+            </div>
+        </section>
+
+        <!-- AFFORD -->
+        <section id="afford" class="page-section">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card p-4">
+                        <h4 class="fw-bold mb-3">Can I Afford This?</h4>
+
+                        <div class="mb-3">
+                            <label class="form-label">Purchase amount (₹)</label>
+                            <input type="number" class="form-control" id="purchaseAmount">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="purchaseCategory">
+                                <option>Food</option>
+                                <option>Travel</option>
+                                <option>Hostel</option>
+                                <option>Academics</option>
+                                <option>Shopping</option>
+                                <option>Entertainment</option>
+                                <option>Health</option>
+                                <option>Savings</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <select class="form-select" id="purchasePriority">
+                                <option value="essential">Essential</option>
+                                <option value="important">Important</option>
+                                <option value="optional">Optional</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="checkAfford">Check Affordability</button>
+
+                        <div id="affordResult" class="alert alert-info mt-4 mb-0">
+                            Enter details to check affordability.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="page-section">
+            <div class="card p-4">
+                <h4 class="fw-bold mb-3">Frequently Asked Questions</h4>
+
+                <div class="faq-item">
+                    <strong>How does Pocket-Money Planner work?</strong>
+                    <div class="faq-answer">It divides your allowance into food, travel, academics, savings, and fun
+                        using a student-friendly 35-15-25-15-10 split.</div>
+                </div>
+
+                <div class="faq-item">
+                    <strong>How does the affordability checker work?</strong>
+                    <div class="faq-answer">It checks your remaining balance, selected category budget, and priority.
+                        Essential purchases receive more flexibility than optional ones.</div>
+                </div>
+
+                <div class="faq-item">
+                    <strong>What is the Subscription Trap Detector?</strong>
+                    <div class="faq-answer">It finds recurring expenses such as OTT, gym, cloud storage, and
+                        food-delivery memberships, then calculates their monthly and yearly cost.</div>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Can I customize colors?</strong>
+                    <div class="faq-answer">Yes. Go to Settings and choose a color palette. Your choice is saved in your
+                        browser.</div>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Is investment advice personalized?</strong>
+                    <div class="faq-answer">The AI assistant provides educational guidance only. For real investments,
+                        verify products, risks, and regulations before investing.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="settings" class="page-section">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card p-4">
+                        <h4 class="fw-bold mb-3">Settings</h4>
+
+                        <div class="text-center mb-4">
+                            <div class="avatar mx-auto" id="settingsAvatar"
+                                style="width:84px;height:84px;font-size:2rem;">A</div>
+                            <input class="form-control mt-3" id="settingsName">
+                            <input class="form-control mt-2" id="settingsEmail" readonly>
+                        </div>
+
+                        <label class="form-label fw-semibold">Theme</label>
+                        <div class="d-flex gap-3 mb-4">
+                            <div class="text-center">
+                                <div class="theme-dot" data-theme="light" style="background:#f4f7fb;"></div>
+                                <small>Light</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="theme-dot" data-theme="dark" style="background:#070c16;"></div>
+                                <small>Dark</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="theme-dot" data-theme="eye" style="background:#f3ead6;"></div>
+                                <small>Eye Comfort</small>
+                            </div>
+                        </div>
+
+                        <label class="form-label fw-semibold">Custom Color Palette</label>
+                        <div class="d-flex gap-3 mb-4">
+                            <input type="color" class="form-control form-control-color" id="primaryColor"
+                                value="#2563eb">
+                            <input type="color" class="form-control form-control-color" id="accentColor"
+                                value="#7c3aed">
+                        </div>
+
+                        <label class="form-label fw-semibold">Monthly Income (₹)</label>
+                        <input type="number" class="form-control mb-3" id="settingsIncome">
+
+                        <button class="btn btn-primary w-100" id="saveSettings">Save Settings</button>
+                        <button class="btn btn-outline-danger w-100 mt-3" id="clearData">Delete All My Data</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-4">Campus Money Coach • Version 3</footer>
+
+    <!-- AI CHAT -->
+    <div id="chatWidget">
+        <button id="chatButton"><i class="bi bi-robot"></i></button>
+    </div>
+
+    <div class="card" id="chatBox">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <strong><i class="bi bi-robot"></i> Money Coach AI</strong>
+            <button class="btn-close" id="closeChat"></button>
+        </div>
+
+        <div class="p-2 border-bottom" id="chatSuggestions"></div>
+        <div id="chatMessages"></div>
+
+        <div class="p-2 border-top d-flex gap-2">
+            <input class="form-control" id="chatInput" placeholder="Ask about budget, savings, investment...">
+            <button class="btn btn-primary" id="sendChat"><i class="bi bi-send"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const KEY = "campusMoneyCoachV3";
+        let currentUser;
+        let spendingChart = null;
+        let categoryChart = null;
+
+        const getData = () => JSON.parse(localStorage.getItem(KEY)) || {users: {}};
+        const saveData = data => localStorage.setItem(KEY, JSON.stringify(data));
+
+        function saveUser() {
+            const data = getData();
+            data.users[currentUser.email] = currentUser;
+            saveData(data);
+        }
+
+        /* ---------------- AUTH ---------------- */
+
+        const authModal = new bootstrap.Modal("#authModal");
+        let authMode = "login";
+
+        document.querySelectorAll("[data-auth]").forEach(button => {
+            button.addEventListener("click", () => {
+                authMode = button.dataset.auth;
+
+                document.querySelectorAll("[data-auth]").forEach(b => b.classList.remove("active"));
+                button.classList.add("active");
+
+                document.getElementById("nameField").style.display =
+                    authMode === "signup" ? "block" : "none";
+
+                document.getElementById("authSubmit").innerText =
+                    authMode === "signup" ? "Create Account" : "Login";
+            });
+        });
+
+        document.getElementById("authForm").addEventListener("submit", event => {
+            event.preventDefault();
+
+            const email = document.getElementById("authEmail").value.trim().toLowerCase();
+            const password = document.getElementById("authPassword").value;
+            const data = getData();
+
+            if (authMode === "signup") {
+                if (data.users[email]) {
+                    document.getElementById("authError").innerText = "Account already exists. Please login.";
+                    return;
+                }
+
+                data.users[email] = {
+                    name: document.getElementById("authName").value.trim() || email.split("@")[0],
+                    email,
+                    password,
+                    income: 0,
+                    theme: "light",
+                    primaryColor: "#2563eb",
+                    accentColor: "#7c3aed",
+                    transactions: [],
+                    goals: [],
+                    budgets: {
+                        Food: {limit: 2000, priority: "essential"},
+                        Travel: {limit: 1000, priority: "important"},
+                        Hostel: {limit: 3000, priority: "essential"},
+                        Academics: {limit: 2000, priority: "essential"},
+                        Shopping: {limit: 1500, priority: "optional"},
+                        Entertainment: {limit: 1000, priority: "optional"},
+                        Health: {limit: 1000, priority: "essential"},
+                        Savings: {limit: 2000, priority: "important"}
+                    }
+                };
+
+                saveData(data);
+                loginUser(email, password);
+
+            } else {
+                if (!data.users[email] || data.users[email].password !== password) {
+                    document.getElementById("authError").innerText = "Invalid email or password.";
+                    return;
+                }
+
+                loginUser(email, password);
+            }
+        });
+
+        function loginUser(email, password) {
+            const user = getData().users[email];
+
+            if (!user || user.password !== password) return;
+
+            currentUser = user;
+            sessionStorage.setItem("activeUser", email);
+            authModal.hide();
+            loadUserInterface();
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            currentUser = null;
+            sessionStorage.removeItem("activeUser");
+            location.reload();
+        });
+
+        /* ---------------- LOAD USER ---------------- */
+
+        function loadUserInterface() {
+            document.getElementById("dashboardName").innerText = currentUser.name;
+            document.getElementById("navUserName").innerText = currentUser.name;
+
+            document.getElementById("userAvatar").innerText = currentUser.name[0].toUpperCase();
+            document.getElementById("settingsAvatar").innerText = currentUser.name[0].toUpperCase();
+
+            document.getElementById("settingsName").value = currentUser.name;
+            document.getElementById("settingsEmail").value = currentUser.email;
+            document.getElementById("settingsIncome").value = currentUser.income;
+
+            document.getElementById("primaryColor").value = currentUser.primaryColor;
+            document.getElementById("accentColor").value = currentUser.accentColor;
+
+            applyColors();
+            setTheme(currentUser.theme || "light");
+            renderAll();
+        }
+
+        /* ---------------- THEME + COLORS ---------------- */
+
+        function setTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            currentUser.theme = theme;
+            saveUser();
+
+            document.querySelectorAll(".theme-dot").forEach(dot => {
+                dot.classList.toggle("active", dot.dataset.theme === theme);
+            });
+        }
+
+        document.querySelectorAll(".theme-dot").forEach(dot => {
+            dot.addEventListener("click", () => setTheme(dot.dataset.theme));
+        });
+
+        function applyColors() {
+            document.documentElement.style.setProperty("--primary", currentUser.primaryColor);
+            document.documentElement.style.setProperty("--accent", currentUser.accentColor);
+        }
+
+        document.getElementById("primaryColor").addEventListener("input", event => {
+            currentUser.primaryColor = event.target.value;
+            applyColors();
+            saveUser();
+        });
+
+        document.getElementById("accentColor").addEventListener("input", event => {
+            currentUser.accentColor = event.target.value;
+            applyColors();
+            saveUser();
+        });
+
+        /* ---------------- NAVIGATION ---------------- */
+
+        document.querySelectorAll("[data-page]").forEach(button => {
+            button.addEventListener("click", () => {
+                const target = button.dataset.page;
+
+                document.querySelectorAll(".page-section").forEach(section => {
+                    section.classList.remove("active");
+                });
+
+                document.getElementById(target).classList.add("active");
+
+                document.querySelectorAll(".nav-link").forEach(link => {
+                    link.classList.remove("active");
+                });
+
+                const activeLink = document.querySelector(`.nav-link[data-page="${target}"]`);
+                if (activeLink) activeLink.classList.add("active");
+
+                window.scrollTo({top: 0, behavior: "smooth"});
+            });
+        });
+
+        /* ---------------- ADD TRANSACTION ---------------- */
+
+        document.getElementById("amount").addEventListener("input", event => {
+            const value = Number(event.target.value);
+            const type = document.getElementById("type").value;
+
+            document.getElementById("amountPreview").innerText =
+                value > 0 ? `You are adding ₹${value} as ${type}.` : "";
+        });
+
+        document.getElementById("transactionForm").addEventListener("submit", event => {
+            event.preventDefault();
+
+            currentUser.transactions.unshift({
+                date: document.getElementById("date").value,
+                type: document.getElementById("type").value,
+                category: document.getElementById("category").value,
+                priority: document.getElementById("priority").value,
+                description: document.getElementById("description").value || "No description",
+                amount: Number(document.getElementById("amount").value),
+                subscription: document.getElementById("isSubscription").checked
+            });
+
+            saveUser();
+            renderAll();
+
+            event.target.reset();
+            document.getElementById("amountPreview").innerText = "";
+            showToast("Transaction saved successfully!");
+        });
+
+        /* ---------------- TRANSACTION HISTORY ---------------- */
+
+        function filteredTransactions() {
+            const fromDate = document.getElementById("fromDate").value;
+            const toDate = document.getElementById("toDate").value;
+            const typeFilter = document.getElementById("typeFilter").value;
+            const searchText = document.getElementById("searchText").value.toLowerCase();
+
+            return currentUser.transactions.filter(transaction => {
+                const dateOk =
+                    (!fromDate || transaction.date >= fromDate) &&
+                    (!toDate || transaction.date <= toDate);
+
+                const typeOk = !typeFilter || transaction.type === typeFilter;
+
+                const searchOk =
+                    transaction.description.toLowerCase().includes(searchText) ||
+                    transaction.category.toLowerCase().includes(searchText);
+
+                return dateOk && typeOk && searchOk;
+            });
+        }
+
+        function renderTransactions() {
+            const tbody = document.getElementById("transactionTable");
+            tbody.innerHTML = "";
+
+            filteredTransactions().forEach(transaction => {
+                const index = currentUser.transactions.indexOf(transaction);
+
+                tbody.innerHTML += `
+      <tr>
+        <td>${transaction.date}</td>
+        <td>
+          <span class="badge ${transaction.type === "income" ? "bg-success" : "bg-danger"}">
+            ${transaction.type}
+          </span>
+        </td>
+        <td>${transaction.category}</td>
+        <td><span class="badge badge-soft">${transaction.priority}</span></td>
+        <td>
+          ${transaction.description}
+          ${transaction.subscription ? '<span class="badge bg-danger">Recurring</span>' : ""}
+        </td>
+        <td class="text-end ${transaction.type}">₹${transaction.amount}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteTransaction(${index})">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>`;
+            });
+        }
+
+        function deleteTransaction(index) {
+            currentUser.transactions.splice(index, 1);
+            saveUser();
+            renderAll();
+        }
+
+        ["fromDate", "toDate", "typeFilter", "searchText"].forEach(id => {
+            document.getElementById(id).addEventListener("input", renderTransactions);
+        });
+
+        /* ---------------- DASHBOARD ---------------- */
+
+        function getTotal(type) {
+            return currentUser.transactions
+                .filter(transaction => transaction.type === type)
+                .reduce((total, transaction) => total + transaction.amount, 0);
+        }
+
+        function getCategoryTotal(category, type = "expense") {
+            return currentUser.transactions
+                .filter(transaction =>
+                    transaction.category === category && transaction.type === type
+                )
+                .reduce((total, transaction) => total + transaction.amount, 0);
+        }
+
+        function renderDashboard() {
+            const income = getTotal("income");
+            const spent = getTotal("expense");
+            const remaining = income - spent;
+
+            const score = income > 0
+                ? Math.min(100, Math.round((remaining / income) * 100))
+                : 0;
+
+            document.getElementById("totalIncome").innerText = `₹${income.toLocaleString("en-IN")}`;
+            document.getElementById("totalSpent").innerText = `₹${spent.toLocaleString("en-IN")}`;
+            document.getElementById("remainingBalance").innerText = `₹${remaining.toLocaleString("en-IN")}`;
+            document.getElementById("healthScore").innerText = `${score} / 100`;
+            document.getElementById("healthBar").style.width = `${score}%`;
+
+            renderInsights();
+            renderWeeklyReport();
+            updateCharts();
+        }
+
+        function renderInsights() {
+            const box = document.getElementById("smartInsights");
+
+            if (!currentUser.transactions.length) {
+                box.innerText = "Add transactions to unlock personalized insights.";
+                return;
+            }
+
+            const food = getCategoryTotal("Food");
+            const shopping = getCategoryTotal("Shopping");
+            const entertainment = getCategoryTotal("Entertainment");
+            const savings = getCategoryTotal("Savings");
+
+            let html = "";
+
+            if (food > 1000) {
+                html += `<p>🍜 Food spending is ₹${food}. Reducing two food-delivery orders weekly could save approximately ₹400–₹500 monthly.</p>`;
+            }
+
+            if (shopping > 1500) {
+                html += `<p>🛍️ Shopping spending is high. Try a 48-hour waiting rule before non-essential purchases.</p>`;
+            }
+
+            if (entertainment > 1000) {
+                html += `<p>🎬 Entertainment spending is above a comfortable student range. Consider setting a monthly entertainment cap.</p>`;
+            }
+
+            if (savings === 0) {
+                html += `<p>💰 You have not recorded savings yet. Start by saving 10% of your monthly income.</p>`;
+            } else {
+                html += `<p>✅ Great job tracking savings. Aim to gradually increase it toward 20% of income.</p>`;
+            }
+
+            box.innerHTML = html || "<p>Your spending pattern looks balanced. Keep tracking consistently.</p>";
+        }
+
+        function renderWeeklyReport() {
+            const today = new Date();
+            const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+            const twoWeeksAgo = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
+
+            const thisWeek = currentUser.transactions.filter(
+                t => t.type === "expense" && t.date >= weekAgo
+            );
+
+            const lastWeek = currentUser.transactions.filter(
+                t => t.type === "expense" && t.date >= twoWeeksAgo && t.date < weekAgo
+            );
+
+            const thisTotal = thisWeek.reduce((total, t) => total + t.amount, 0);
+            const lastTotal = lastWeek.reduce((total, t) => total + t.amount, 0);
+
+            let html = `You spent <b>₹${thisTotal}</b> this week.`;
+
+            if (lastTotal > 0) {
+                const change = Math.round(((thisTotal - lastTotal) / lastTotal) * 100);
+
+                html += change >= 0
+                    ? ` That is <b>${change}% more</b> than last week.`
+                    : ` That is <b>${Math.abs(change)}% less</b> than last week. Excellent control!`;
+            }
+
+            const categoryTotals = {};
+
+            thisWeek.forEach(transaction => {
+                categoryTotals[transaction.category] =
+                    (categoryTotals[transaction.category] || 0) + transaction.amount;
+            });
+
+            const topCategory = Object.entries(categoryTotals)
+                .sort((a, b) => b[1] - a[1])[0];
+
+            if (topCategory) {
+                html += `<br>Your biggest category was <b>${topCategory[0]}</b> at ₹${topCategory[1]}.`;
+            }
+
+            document.getElementById("weeklyReport").innerHTML = html;
+        }
+
+        /* ---------------- CHARTS ---------------- */
+
+        function updateCharts() {
+            const monthly = [0, 0, 0, 0];
+
+            currentUser.transactions
+                .filter(transaction => transaction.type === "expense")
+                .forEach(transaction => {
+                    const day = Number(transaction.date.split("-")[2]);
+                    const weekIndex = Math.min(3, Math.floor((day - 1) / 7));
+                    monthly[weekIndex] += transaction.amount;
+                });
+
+            const categories = {};
+
+            currentUser.transactions
+                .filter(transaction => transaction.type === "expense")
+                .forEach(transaction => {
+                    categories[transaction.category] =
+                        (categories[transaction.category] || 0) + transaction.amount;
+                });
+
+            if (spendingChart) spendingChart.destroy();
+            if (categoryChart) categoryChart.destroy();
+
+            const spendingCanvas = document.getElementById("spendingChart");
+            const categoryCanvas = document.getElementById("categoryChart");
+
+            spendingChart = new Chart(spendingCanvas, {
+                type: "line",
+                data: {
+                    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+                    datasets: [{
+                        label: "Spending",
+                        data: monthly,
+                        borderColor: "#0d6efd",
+                        backgroundColor: "rgba(13,110,253,.15)",
+                        fill: true,
+                        tension: .35
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            const labels = Object.keys(categories);
+            const values = Object.values(categories);
+
+            categoryChart = new Chart(categoryCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: labels.length ? labels : ["No expenses yet"],
+                    datasets: [{
+                        data: values.length ? values : [1],
+                        backgroundColor: [
+                            "#2563eb", "#16a34a", "#f59e0b", "#7c3aed",
+                            "#fd7e14", "#20c997", "#dc3545", "#94a3b8"
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        /* ---------------- BUDGETS ---------------- */
+
+        function renderBudgets() {
+            const container = document.getElementById("budgetContainer");
+            container.innerHTML = "";
+
+            Object.entries(currentUser.budgets).forEach(([name, budget]) => {
+                const spent = getCategoryTotal(name);
+                const percent = Math.min(100, (spent / budget.limit) * 100);
+
+                const color =
+                    percent >= 100 ? "bg-danger" :
+                        percent >= 80 ? "bg-warning" :
+                            "bg-success";
+
+                container.innerHTML += `
+      <div class="col-md-6">
+        <div class="card p-3">
+          <div class="d-flex justify-content-between">
+            <strong>${name} <span class="badge badge-soft">${budget.priority}</span></strong>
+            <span>₹${spent} / ₹${budget.limit}</span>
+          </div>
+
+          <div class="progress mt-2" style="height:10px;">
+            <div class="progress-bar ${color}" style="width:${percent}%;"></div>
+          </div>
+
+          <div class="d-flex gap-2 mt-3">
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              value="${budget.limit}"
+              onchange="adjustBudget('${name}', this.value)"
+            >
+            <button class="btn btn-sm btn-outline-primary" onclick="editBudget('${name}')">Edit</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteBudget('${name}')">Delete</button>
+          </div>
+        </div>
+      </div>`;
+            });
+        }
+
+        document.getElementById("budgetForm").addEventListener("submit", event => {
+            event.preventDefault();
+
+            const category = document.getElementById("budgetCategory").value.trim();
+            const limit = Number(document.getElementById("budgetLimit").value);
+            const priority = document.getElementById("budgetPriority").value;
+
+            if (!category || limit <= 0) return;
+
+            currentUser.budgets[category] = {limit, priority};
+            saveUser();
+            renderAll();
+            showToast("Budget saved!");
+        });
+
+        function adjustBudget(category, value) {
+            currentUser.budgets[category].limit = Number(value);
+            saveUser();
+            renderAll();
+        }
+
+        function editBudget(category) {
+            document.getElementById("budgetCategory").value = category;
+            document.getElementById("budgetLimit").value = currentUser.budgets[category].limit;
+            document.getElementById("budgetPriority").value = currentUser.budgets[category].priority;
+        }
+
+        function deleteBudget(category) {
+            delete currentUser.budgets[category];
+            saveUser();
+            renderAll();
+        }
+
+        document.getElementById("resetBudgets").addEventListener("click", () => {
+            if (!confirm("Reset all budgets to default student limits?")) return;
+
+            currentUser.budgets = {
+                Food: {limit: 2000, priority: "essential"},
+                Travel: {limit: 1000, priority: "important"},
+                Hostel: {limit: 3000, priority: "essential"},
+                Academics: {limit: 2000, priority: "essential"},
+                Shopping: {limit: 1500, priority: "optional"},
+                Entertainment: {limit: 1000, priority: "optional"},
+                Health: {limit: 1000, priority: "essential"},
+                Savings: {limit: 2000, priority: "important"}
+            };
+
+            saveUser();
+            renderAll();
+            showToast("Budgets reset successfully!");
+        });
+
+        /* ---------------- POCKET PLANNER ---------------- */
+
+        let plannedBudget = null;
+
+        document.getElementById("planAllowance").addEventListener("click", () => {
+            const amount = Number(document.getElementById("allowance").value);
+
+            if (!amount || amount <= 0) {
+                showToast("Enter a valid monthly allowance.");
+                return;
+            }
+
+            plannedBudget = {
+                Food: Math.round(amount * .35),
+                Travel: Math.round(amount * .15),
+                Academics: Math.round(amount * .25),
+                Savings: Math.round(amount * .15),
+                Entertainment: Math.round(amount * .10)
+            };
+
+            document.getElementById("plannerResult").innerHTML = `
+    <div class="alert alert-success">
+      For a monthly allowance of <b>₹${amount}</b>:<br><br>
+      🍜 Food: ₹${plannedBudget.Food}<br>
+      🚆 Travel: ₹${plannedBudget.Travel}<br>
+      📚 Academics: ₹${plannedBudget.Academics}<br>
+      💰 Savings: ₹${plannedBudget.Savings}<br>
+      🎮 Fun: ₹${plannedBudget.Entertainment}
+    </div>`;
+        });
+
+        document.getElementById("applyPlan").addEventListener("click", () => {
+            if (!plannedBudget) {
+                showToast("Create a plan first.");
+                return;
+            }
+
+            Object.entries(plannedBudget).forEach(([category, limit]) => {
+                currentUser.budgets[category] = {
+                    limit,
+                    priority: category === "Savings" ? "important" : "optional"
+                };
+            });
+
+            saveUser();
+            renderAll();
+            showToast("Pocket-money plan applied!");
+        });
+
+        /* ---------------- GOALS ---------------- */
+
+        document.getElementById("goalForm").addEventListener("submit", event => {
+            event.preventDefault();
+
+            currentUser.goals.push({
+                name: document.getElementById("goalName").value,
+                target: Number(document.getElementById("goalTarget").value),
+                deadline: document.getElementById("goalDeadline").value,
+                saved: 0
+            });
+
+            saveUser();
+            renderGoals();
+            event.target.reset();
+        });
+
+        function renderGoals() {
+            const container = document.getElementById("goalContainer");
+            container.innerHTML = "";
+
+            currentUser.goals.forEach((goal, index) => {
+                const percent = Math.min(100, (goal.saved / goal.target) * 100);
+                const days = Math.ceil((new Date(goal.deadline) - new Date()) / 86400000);
+
+                container.innerHTML += `
+      <div class="col-md-6">
+        <div class="card goal-card p-3">
+          <div class="d-flex justify-content-between">
+            <strong>${goal.name}</strong>
+            <small class="text-muted">${days > 0 ? days + " days left" : "Deadline passed"}</small>
+          </div>
+
+          <div class="progress mt-2" style="height:12px;">
+            <div class="progress-bar" style="width:${percent}%;background:var(--accent);"></div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-2">
+            <span>₹${goal.saved} / ₹${goal.target}</span>
+            <button class="btn btn-sm btn-outline-primary" onclick="addToGoal(${index})">Add Savings</button>
+          </div>
+        </div>
+      </div>`;
+            });
+        }
+
+        function addToGoal(index) {
+            const amount = Number(prompt("Enter savings amount:"));
+
+            if (amount > 0) {
+                currentUser.goals[index].saved += amount;
+                saveUser();
+                renderGoals();
+                showToast("Savings added!");
+            }
+        }
+
+        /* ---------------- SUBSCRIPTIONS ---------------- */
+
+        function renderSubscriptions() {
+            const subscriptions = currentUser.transactions.filter(
+                transaction => transaction.subscription && transaction.type === "expense"
+            );
+
+            const list = document.getElementById("subscriptionList");
+            const summary = document.getElementById("subscriptionSummary");
+
+            list.innerHTML = "";
+
+            if (!subscriptions.length) {
+                list.innerHTML = `<div class="alert alert-info">No recurring subscriptions detected yet.</div>`;
+                summary.innerText = "";
+                return;
+            }
+
+            const monthlyTotal = subscriptions.reduce(
+                (total, transaction) => total + transaction.amount, 0
+            );
+
+            subscriptions.forEach(transaction => {
+                list.innerHTML += `
+      <div class="card subscription-card p-3 mb-2">
+        <div class="d-flex justify-content-between">
+          <strong>${transaction.description}</strong>
+          <span class="badge bg-danger">₹${transaction.amount}/month</span>
+        </div>
+        <small class="text-muted">
+          Category: ${transaction.category} • Yearly cost: ₹${transaction.amount * 12}
+        </small>
+      </div>`;
+            });
+
+            summary.innerHTML = `
+    ⚠️ You have <b>${subscriptions.length}</b> recurring subscriptions costing
+    <b>₹${monthlyTotal}</b> monthly and <b>₹${monthlyTotal * 12}</b> yearly.
+    Cancel unused services to save money.`;
+        }
+
+        /* ---------------- GROUP ---------------- */
+
+        document.getElementById("groupForm").addEventListener("submit", event => {
+            event.preventDefault();
+
+            const total = Number(document.getElementById("groupAmount").value);
+            const share = total / 3;
+
+            document.getElementById("groupResult").className = "alert alert-success mt-3 mb-0";
+            document.getElementById("groupResult").innerHTML = `
+    <b>${document.getElementById("groupDesc").value}</b>: ₹${total}<br>
+    Aman: +₹${(total - share).toFixed(2)}<br>
+    Riya: -₹${share.toFixed(2)}<br>
+    Karan: -₹${share.toFixed(2)}`;
+
+            event.target.reset();
+        });
+
+        /* ---------------- AFFORDABILITY ---------------- */
+
+        document.getElementById("checkAfford").addEventListener("click", () => {
+            const amount = Number(document.getElementById("purchaseAmount").value);
+            const category = document.getElementById("purchaseCategory").value;
+            const priority = document.getElementById("purchasePriority").value;
+
+            const remaining = getTotal("income") - getTotal("expense");
+            const budget = currentUser.budgets[category]?.limit || 0;
+            const categoryRemaining = budget - getCategoryTotal(category);
+
+            const priorityWeight = {
+                essential: 1.2,
+                important: 1,
+                optional: .7
+            }[priority];
+
+            const adjustedRemaining = remaining * priorityWeight;
+            const result = document.getElementById("affordResult");
+
+            if (!amount || amount <= 0) {
+                result.className = "alert alert-warning mt-4 mb-0";
+                result.innerText = "Enter a valid purchase amount.";
+                return;
+            }
+
+            if (amount <= categoryRemaining && amount <= adjustedRemaining) {
+                result.className = "alert alert-success mt-4 mb-0";
+                result.innerText = `Yes. This ${priority} ${category} purchase fits your budget. Remaining after purchase: ₹${remaining - amount}.`;
+
+            } else if (amount <= adjustedRemaining) {
+                result.className = "alert alert-warning mt-4 mb-0";
+                result.innerText = `Possible, but your ${category} budget is low. Remaining category budget: ₹${categoryRemaining}.`;
+
+            } else {
+                result.className = "alert alert-danger mt-4 mb-0";
+                result.innerText = `Not recommended. This exceeds your adjusted affordability limit by ₹${Math.ceil(amount - adjustedRemaining)}.`;
+            }
+        });
+
+        /* ---------------- SETTINGS ---------------- */
+
+        document.getElementById("saveSettings").addEventListener("click", () => {
+            currentUser.name =
+                document.getElementById("settingsName").value.trim() || currentUser.name;
+
+            currentUser.income =
+                Number(document.getElementById("settingsIncome").value) || 0;
+
+            saveUser();
+            loadUserInterface();
+            showToast("Settings saved!");
+        });
+
+        document.getElementById("clearData").addEventListener("click", () => {
+            if (!confirm("Delete all your data permanently?")) return;
+
+            const data = getData();
+            delete data.users[currentUser.email];
+            saveData(data);
+            location.reload();
+        });
+
+        /* ---------------- FAQ ---------------- */
+
+        document.querySelectorAll(".faq-item").forEach(item => {
+            item.addEventListener("click", () => item.classList.toggle("open"));
+        });
+
+        /* ---------------- AI CHATBOT ---------------- */
+
+        const suggestions = [
+            "How should I budget ₹10,000?",
+            "How can I save money as a student?",
+            "Give me investment advice",
+            "Explain SIP and mutual funds",
+            "How do I detect subscriptions?",
+            "How to reduce food delivery spending?"
+        ];
+
+        document.getElementById("chatSuggestions").innerHTML = suggestions
+            .map(suggestion => `<button class="suggestion">${suggestion}</button>`)
+            .join("");
+
+        document.querySelectorAll(".suggestion").forEach(button => {
+            button.addEventListener("click", () => {
+                document.getElementById("chatInput").value = button.innerText;
+                sendChat();
+            });
+        });
+
+        document.getElementById("chatButton").addEventListener("click", () => {
+            const chatBox = document.getElementById("chatBox");
+            chatBox.classList.toggle("open");
+
+            if (chatBox.classList.contains("open") && !document.getElementById("chatMessages").children.length) {
+                addMessage("Hi! I am your Money Coach AI. Ask me about budgeting, savings, investments, subscriptions, or expenses.", "bot");
+            }
+        });
+
+        document.getElementById("closeChat").addEventListener("click", () => {
+            document.getElementById("chatBox").classList.remove("open");
+        });
+
+        document.getElementById("sendChat").addEventListener("click", sendChat);
+
+        document.getElementById("chatInput").addEventListener("keydown", event => {
+            if (event.key === "Enter") sendChat();
+        });
+
+        function sendChat() {
+            const input = document.getElementById("chatInput");
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            addMessage(text, "user");
+            input.value = "";
+
+            setTimeout(() => addMessage(getAIReply(text), "bot"), 500);
+        }
+
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.innerHTML += `<div class="chat-msg ${sender}">${text}</div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getAIReply(question) {
+            const q = question.toLowerCase();
+
+            if (q.includes("budget")) {
+                const income = currentUser.income || getTotal("income");
+
+                return `For a monthly income of ₹${income || "your"}, try this structure:<br><br>
+      • 50% essentials: food, hostel, travel<br>
+      • 30% important: academics, savings, health<br>
+      • 20% optional: shopping and entertainment<br><br>
+      Track expenses for two weeks, then adjust category limits based on actual spending.`;
+            }
+
+            if (q.includes("save")) {
+                return `Start with the 20% savings rule:<br><br>
+      1. Save first, spend later.<br>
+      2. Transfer a fixed amount on allowance day.<br>
+      3. Use no-spend challenges.<br>
+      4. Build an emergency fund covering 3 months of essential expenses.<br><br>
+      Example: Saving ₹2,000 monthly from ₹10,000 income creates ₹24,000 in one year before interest.`;
+            }
+
+            if (q.includes("invest")) {
+                return `Investment basics for students:<br><br>
+      • First build an emergency fund.<br>
+      • Avoid debt and speculative trading.<br>
+      • Learn index funds, mutual funds, and SIPs.<br>
+      • Prefer long-term, diversified investments.<br>
+      • Never invest borrowed money.<br><br>
+      Educational example: A ₹2,000 monthly SIP for 5 years at an assumed 10% annual return may grow to roughly ₹1.55 lakh. Actual returns vary and are not guaranteed.`;
+            }
+
+            if (q.includes("sip") || q.includes("mutual fund")) {
+                return `A SIP invests a fixed amount regularly into a mutual fund. It encourages discipline and reduces timing risk through rupee-cost averaging. Before investing, check expense ratio, fund category, past consistency, and your risk tolerance.`;
+            }
+
+            if (q.includes("stock")) {
+                return `Stocks can create long-term wealth but are volatile. As a beginner, avoid investing money needed within 3–5 years. Learn fundamentals, diversify, and consider index funds before buying individual stocks.`;
+            }
+
+            if (q.includes("emergency")) {
+                return `An emergency fund should cover 3–6 months of essential expenses such as food, travel, hostel, and medical needs. Keep it in a savings account or liquid fund, not in risky investments.`;
+            }
+
+            if (q.includes("subscription")) {
+                const subscriptions = currentUser.transactions.filter(t => t.subscription);
+                const monthly = subscriptions.reduce((total, t) => total + t.amount, 0);
+
+                return `You have ${subscriptions.length} subscriptions costing ₹${monthly} monthly and ₹${monthly * 12} yearly. Cancel services unused for 30 days and review renewals before every billing cycle.`;
+            }
+
+            if (q.includes("food")) {
+                const food = getCategoryTotal("Food");
+
+                return `Your food spending is ₹${food}. Try meal planning, limiting delivery to once weekly, and using student discounts. Cutting two orders weekly may save roughly ₹400–₹500 monthly.`;
+            }
+
+            if (q.includes("afford")) {
+                return `Use the Afford page. Enter the amount, category, and priority. Essential purchases get more flexibility, while optional purchases are checked more strictly against your budget.`;
+            }
+
+            if (q.includes("roommate")) {
+                return `Use Roommates to split hostel, grocery, Wi-Fi, and travel expenses. Record who paid, choose equal, exact, or percentage split, and mark settlements after repayment.`;
+            }
+
+            if (q.includes("debt") || q.includes("loan")) {
+                return `Avoid high-interest debt. If you already have it, pay the highest-interest balance first while making minimum payments on others. Do not use credit for lifestyle spending.`;
+            }
+
+            if (q.includes("credit card")) {
+                return `Use a credit card only if you can pay the full bill every month. Never pay only the minimum due, because interest can become very expensive.`;
+            }
+
+            if (q.includes("hello") || q.includes("hi")) {
+                return `Hello! Ask me about budgeting, savings, SIPs, stocks, emergency funds, subscriptions, debt, or roommate expenses.`;
+            }
+
+            return `I can help with:<br><br>
+    • Monthly budgeting<br>
+    • Savings and emergency funds<br>
+    • Investment basics, SIPs, stocks, and risk<br>
+    • Subscription control<br>
+    • Debt and credit-card safety<br>
+    • Roommate expense splitting<br><br>
+    Try: “How should I invest ₹5,000 per month?”`;
+        }
+
+        /* ---------------- TOAST ---------------- */
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "position-fixed bottom-0 start-50 translate-middle-x mb-4 alert alert-success shadow";
+            toast.style.zIndex = 2000;
+            toast.innerText = message;
+
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2200);
+        }
+
+        /* ---------------- RENDER ALL ---------------- */
+
+        function renderAll() {
+            renderTransactions();
+            renderDashboard();
+            renderBudgets();
+            renderGoals();
+            renderSubscriptions();
+        }
+
+        /* ---------------- AUTO LOGIN ---------------- */
+
+        window.addEventListener("load", () => {
+            const email = sessionStorage.getItem("activeUser");
+            const data = getData();
+
+            if (email && data.users[email]) {
+                currentUser = data.users[email];
+                authModal.hide();
+                loadUserInterface();
+            } else {
+                authModal.show();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
